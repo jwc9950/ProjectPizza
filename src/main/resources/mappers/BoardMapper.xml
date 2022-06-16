@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.mycomapny.board.BoardMapper">
+  
+  <insert id="insert" parameterType="Board">
+  
+<!--   insert문 전에 select문을 실행해서Board의 bnum필드에 set -->
+  	<selectKey keyProperty="bnum" resultType="int" order="BEFORE">  <!-- 먼저하라는뜻 --><!-- keyProperty은 어디에 담겟다는것 -->
+  	 SELECT b_seq.nextval FROM dual
+  	</selectKey>
+ 	
+<!--   #{bnum}한이유가  위에 insert문 전에 select문을 실행해서Board의 bnum필드에 set 하여 bnum을 insert -->
+    INSERT INTO board(bnum,email,subject,content,ip)
+    VALUES (#{bnum},#{email}, #{subject}, #{content},#{ip})
+  </insert>
+  
+  <update id="update">
+   UPDATE board
+	SET email =#{email},
+	subject = #{subject},
+	content =#{content},
+	ip = #{ip},
+	modidate=sysdate
+	WHERE bnum = #{bnum}
+  </update>
+  
+  
+  <update id="updateRemoveyn"> <!--  삭제여부업데이트 -->
+		update board
+		set removeyn='Y'
+		where bnum=#{bnum}
+  </update>
+  
+  
+  
+  
+  
+  <delete id="delete">
+ 	DELETE FROM board
+	WHERE bnum = #{bnum}
+  </delete>
+  
+  <select id="selectOne" resultType="Board">
+ 	SELECT  * FROM board
+	WHERE bnum = #{bnum}
+  </select>
+   
+   <select id="selectList" resultType="Board">
+		  SELECT * 
+			FROM(SELECT ROWNUM rnum, b.* 
+		           FROM(SELECT * FROM board
+		                   <!--  // WHERE email LIKE '%' || 'chldnd11@naver.com' || '%' --><!-- 이문장대신 아래에 -->
+		              
+		            <!--   //아래에 sql문을 만들어서 반복적인 작업을 묶어놓고 여기서 include로불러오기 -->
+		               <include refid="find"/>
+	
+		                      ORDER BY bnum DESC) b)
+			WHERE rnum BETWEEN #{startNum} AND #{entNum}
+	
+   </select>
+   
+  <!--  전체게시물수 구하기 -->
+  <select id="selectTotalCnt" resultType="int">
+	 SELECT COUNT(*) totalCnt FROM board
+<!-- 	//WHERE email LIKE '%' || 'chldnd11' || '%' -->
+<!-- select로 인해 subject일수도 있소 content도 될수있어서 -->
+<include refid="find"/>
+ 						
+  </select>
+  
+  
+  
+  <sql id="find">
+  	<if test="findkey=='email'">
+						  	WHERE email LIKE '%' || #{findvalue} || '%'
+						  	</if>
+						  	<if test="findkey=='subject'">
+						  	WHERE subject LIKE '%' || #{findvalue} || '%'
+						  	</if>
+						  	<if test="findkey=='content'">
+						  	WHERE content LIKE '%' || #{findvalue} || '%'
+						  	</if>
+						  		<if test="findkey=='subcon'">
+						 	 WHERE subject like '%'||#{findvalue}||'%'
+								or content like '%'||#{findvalue}||'%'
+						  	</if> 
+  
+  
+  </sql>
+  
+  
+<!--   조회수클릭시 +1씩증가 -->
+	<update id="update_readcnt">
+	  UPDATE board
+		SET readcnt = readcnt +1
+		WHERE bnum = #{bnum}
+	</update>
+
+
+	<!-- 좋아요 -->
+	<update id="update_LikeCnt">
+		UPDATE board
+		SET likecnt = likecnt +1
+		WHERE bnum = #{bnum}
+	</update>
+
+
+	<!-- 싫어요 -->
+	<update id="update_disLikecnt">
+		UPDATE board
+		SET disLikecnt = disLikecnt +1
+		WHERE bnum =  #{bnum}
+	</update>
+
+   
+   
+  
+  </mapper>

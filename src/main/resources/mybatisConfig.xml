@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!-- //마이바티스 홈페이지에서 발췌 -->
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <configuration>
+  
+  <typeAliases>
+  	<typeAlias type="com.mycomapny.board.dto.Board" alias="Board"/>
+  	<typeAlias type="com.mycomapny.board.dto.BoardFile" alias="BoardFile"/>
+  	<typeAlias type="com.mycomapny.board.dto.Reply" alias="Reply"/>
+  </typeAliases>
+  
+  </configuration>

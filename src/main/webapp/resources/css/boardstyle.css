@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+/* 좋아요 */
+.fa-thumbs-up{
+	color: red;
+}
+
+/* 싫어요 */
+.fa-thumbs-down{
+	color: blue;
+}
+
+.fab fa-replyd{
+	width:20px;
+}
+
